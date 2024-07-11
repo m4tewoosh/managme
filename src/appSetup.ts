@@ -62,7 +62,7 @@ const appSetup = () => {
   // project 2 + stories + tasks:
   new Project(2, 'Coding project', 'Lets build ECU for V12 engine ');
   new Story(
-    2,
+    3,
     new Date(Date.now()),
     'Organize folder structure, bundler and repository',
     1,

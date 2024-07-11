@@ -65,6 +65,24 @@ class ApiBridge {
     const existingStoreTasks = rxjsStore.getStoreTasks().getValue();
     rxjsStore.setStoreTasks([...existingStoreTasks, task]);
   }
+
+  public updateTask(task: Task) {
+    const existingStoreTasks = rxjsStore.getStoreTasks().getValue();
+
+    const updatedTask = existingStoreTasks.find(({ id }) => id === task.id);
+
+    if (!updatedTask) {
+      return;
+    }
+
+    updatedTask.name = task.name;
+    updatedTask.description = task.description;
+    updatedTask.priority = task.priority;
+    updatedTask.state = task.state;
+    updatedTask.assignedUserId = task.assignedUserId;
+    updatedTask.estimatedTime = task.estimatedTime;
+    updatedTask.storyId = task.storyId;
+  }
 }
 
 export default ApiBridge;

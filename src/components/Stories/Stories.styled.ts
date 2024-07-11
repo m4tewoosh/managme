@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
-  max-width: 480px;
-
   > div {
     width: 100%;
   }
@@ -11,6 +9,7 @@ export const Wrapper = styled.div`
 export const HeadingWrapper = styled.div`
   display: flex;
   gap: 16px;
+  margin: 32px 0;
 `;
 
 export const StoriesHeading = styled.h3`
@@ -26,7 +25,7 @@ export const StatusLabel = styled.p`
 `;
 
 export const TasksWrapper = styled.div`
-  margin-left: 32px;
+  margin-left: 16px;
 `;
 
 export const TasksLabelWrapper = styled.div`
@@ -50,4 +49,13 @@ export const StoryWrapper = styled.div`
 export const TaskWrapper = styled.div`
   display: flex;
   gap: 16px;
+`;
+
+export const KanbanWrapper = styled.div`
+  display: flex;
+  gap: 48px;
+
+  > .ant-card {
+    min-width: 320px;
+  }
 `;

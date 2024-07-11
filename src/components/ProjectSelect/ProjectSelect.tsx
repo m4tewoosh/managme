@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Select } from 'antd';
+import { Card, Select, Typography } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { rxjsStore } from '../../store/rxjsStore';
 import { Project } from '../../types/project';
@@ -60,8 +60,8 @@ const ProjectSelect = () => {
   return (
     <S.Wrapper>
       {projects && (
-        <>
-          <S.ProjectLabel>Active project:</S.ProjectLabel>
+        <Card title="Active project">
+          {/* <S.ProjectLabel>Active project:</S.ProjectLabel> */}
           <S.SelectWrapper>
             {projectSelectOptions && (
               <Select
@@ -100,10 +100,10 @@ const ProjectSelect = () => {
             />
           </S.SelectWrapper>
           {selectedProject && (
-            <>
-              <S.ProjectLabel>Project description:</S.ProjectLabel>
+            <S.DescriptionWrapper>
+              <Typography>Description:</Typography>
               <p>{selectedProject.description}</p>
-            </>
+            </S.DescriptionWrapper>
           )}
 
           <EditProject
@@ -116,7 +116,7 @@ const ProjectSelect = () => {
             isModalOpen={isProjectModalOpen}
             setIsModalOpen={setIsProjectModalOpen}
           />
-        </>
+        </Card>
       )}
     </S.Wrapper>
   );

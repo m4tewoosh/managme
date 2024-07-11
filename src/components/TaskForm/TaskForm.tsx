@@ -2,8 +2,9 @@ import { Input, Button, Form, Modal, Select } from 'antd';
 import { rxjsStore } from '../../store/rxjsStore';
 
 import * as S from './TaskFormStyled';
-import { Priority } from '../../types/story';
+import { Priority, Story } from '../../types/story';
 import Task from '../../classes/task';
+import { useEffect, useState } from 'react';
 
 const { TextArea } = Input;
 
@@ -18,20 +19,24 @@ type FormValues = {
   description: string;
   priority: Priority;
   estimatedTime: number;
+  storyId: number;
 };
 
 type TaskFormProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
-  storyId: number;
 };
 
-const TaskForm = ({ isModalOpen, setIsModalOpen, storyId }: TaskFormProps) => {
+const TaskForm = ({ isModalOpen, setIsModalOpen }: TaskFormProps) => {
+  const [activeProjectId, setActiveProjectId] = useState<number>();
+  const [stories, setStories] = useState<Story[] | null>();
+
   const handleSubmit = ({
     name,
     description,
     estimatedTime,
     priority,
+    storyId,
   }: FormValues) => {
     const existingStoreTasks = rxjsStore.getStoreTasks().getValue();
 
@@ -52,6 +57,25 @@ const TaskForm = ({ isModalOpen, setIsModalOpen, storyId }: TaskFormProps) => {
 
     setIsModalOpen(false);
   };
+
+  const activeProjectStories = stories?.filter(
+    (story) => story.projectId === activeProjectId
+  );
+
+  const storySelectOptions = activeProjectStories?.map((story) => ({
+    value: story.id,
+    label: story.name,
+  }));
+
+  useEffect(() => {
+    rxjsStore.getStoreActiveProject().subscribe((id) => {
+      setActiveProjectId(id);
+    });
+
+    rxjsStore.getStoreStories().subscribe((stories) => {
+      setStories(stories);
+    });
+  }, []);
 
   return (
     <Modal
@@ -88,6 +112,22 @@ const TaskForm = ({ isModalOpen, setIsModalOpen, storyId }: TaskFormProps) => {
           >
             <TextArea rows={4} />
           </Form.Item>
+
+          {storySelectOptions && (
+            <Form.Item
+              label="Story:"
+              name="story"
+              initialValue={storySelectOptions[0].value}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select story!',
+                },
+              ]}
+            >
+              <Select options={storySelectOptions} />
+            </Form.Item>
+          )}
 
           <Form.Item
             label="Priority:"

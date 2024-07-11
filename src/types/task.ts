@@ -8,7 +8,7 @@ export type Task = {
   storyId: number;
   estimatedTime: number; //in days
   state: State;
-  createdAt: Date;
+  createdAt?: Date;
   startedAt?: Date;
   finishedAt?: Date;
   assignedUserId?: number;

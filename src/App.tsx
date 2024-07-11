@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import './App.css';
 import appSetup from './appSetup';
-// import ProjectSelect from './components/ProjectSelect/ProjectSelect';
-// import Stories from './components/Stories/Stories';
+import ProjectSelect from './components/ProjectSelect/ProjectSelect';
+import Stories from './components/Stories/Stories';
 // import StoryForm from './components/StoryForm/StoryForm';
 import { ConfigProvider, Layout } from 'antd';
 import Header from './components/Header/Header';
@@ -17,15 +16,15 @@ const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const lightTheme = {
-    token: { colorPrimary: '#49aa19', colorBgLayout: '#ced4da' },
+    token: { colorPrimary: '#51258f', colorBgLayout: '#ced4da' },
   };
 
   const darkTheme = {
     token: {
-      colorPrimary: '#49aa19',
-      colorBgLayout: '#1f2125',
-      colorBgContainer: '#1f1f1f',
-      colorBgElevated: '#1f1f1f',
+      colorPrimary: '#51258f',
+      colorBgLayout: '#141414',
+      colorBgContainer: '#111a2c',
+      colorBgElevated: '#111a2c',
       colorTextBase: '#e1e1e1',
     },
   };
@@ -45,8 +44,8 @@ const App = () => {
       <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
       <Layout style={layoutStyle}>
-        {/* <ProjectSelect /> */}
-        {/* <Stories /> */}
+        <ProjectSelect />
+        <Stories />
       </Layout>
       {/* <StoryForm /> */}
     </ConfigProvider>

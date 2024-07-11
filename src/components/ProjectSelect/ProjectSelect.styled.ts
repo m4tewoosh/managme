@@ -15,3 +15,7 @@ export const SelectWrapper = styled.div`
     width: 100%;
   }
 `;
+
+export const DescriptionWrapper = styled.div`
+  margin-top: 32px;
+`;

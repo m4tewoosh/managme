@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Card, Typography } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { rxjsStore } from '../../store/rxjsStore';
 import EditStory from '../EditStory/EditStory';
@@ -9,6 +10,7 @@ import { Project } from '../../types/project';
 
 import * as S from './Stories.styled';
 import TaskForm from '../TaskForm/TaskForm';
+import EditTask from '../EditTask/EditTask';
 
 const Stories = () => {
   const [activeProjectId, setActiveProjectId] = useState<number>();
@@ -19,10 +21,10 @@ const Stories = () => {
   const [isEditStoryModalOpen, setIsEditStoryModalOpen] = useState(false);
   const [isAddStoryModalOpen, setIsAddStoryModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
 
   const [editedStoryId, setEditedStoryId] = useState<number>();
-  const [newTaskStoryId, setNewTaskStoryId] = useState<number>();
-  // const [editedTaskId, setEditedTaskId] = useState<number>();
+  const [editedTaskId, setEditedTaskId] = useState<number>();
 
   const activeProjectStories = stories?.filter(
     (story) => story.projectId === activeProjectId
@@ -46,18 +48,47 @@ const Stories = () => {
     rxjsStore.setStoreTasks(filteredTasks);
   };
 
+  const renderTasks = (state: State) => {
+    if (!activeProjectStories || !tasks) {
+      return;
+    }
+
+    const activeProjectStoriesIds = activeProjectStories.map(
+      (story) => story.id
+    );
+
+    const activeProjectTasks = tasks.filter((task) =>
+      activeProjectStoriesIds.includes(task.storyId)
+    );
+
+    return activeProjectTasks.map((task) => {
+      if (task.state === state) {
+        return (
+          <S.TaskWrapper key={task.id}>
+            <S.TaskLabel>{task.name}</S.TaskLabel>
+            <DeleteOutlined
+              style={{ fontSize: 24, color: 'red' }}
+              onClick={() => handleDeleteTask(task.id)}
+            />
+            <EditOutlined
+              style={{ fontSize: 24, color: 'blue' }}
+              onClick={() => {
+                setEditedTaskId(task.id);
+                setIsEditTaskModalOpen(true);
+              }}
+            />
+          </S.TaskWrapper>
+        );
+      }
+    });
+  };
+
   const renderStories = (state: State) => {
     if (!activeProjectStories) {
       return;
     }
 
     return activeProjectStories.map((story) => {
-      let storyTasks: Task[] | null = null;
-
-      if (tasks?.length) {
-        storyTasks = tasks.filter((task) => task.storyId === story.id);
-      }
-
       if (story.state === state) {
         return (
           <React.Fragment key={story.id}>
@@ -75,29 +106,6 @@ const Stories = () => {
                 }}
               />
             </S.StoryWrapper>
-            <S.TasksLabelWrapper>
-              <S.TasksLabel>Tasks:</S.TasksLabel>
-              <PlusOutlined
-                style={{ fontSize: 24, color: 'green' }}
-                onClick={() => {
-                  setNewTaskStoryId(story.id);
-                  setIsAddTaskModalOpen(true);
-                }}
-              />
-            </S.TasksLabelWrapper>
-            {storyTasks && (
-              <S.TasksWrapper>
-                {storyTasks.map(({ id, name }) => (
-                  <S.TaskWrapper key={id}>
-                    <S.TaskLabel>{name}</S.TaskLabel>
-                    <DeleteOutlined
-                      style={{ fontSize: 24, color: 'red' }}
-                      onClick={() => handleDeleteTask(id)}
-                    />
-                  </S.TaskWrapper>
-                ))}
-              </S.TasksWrapper>
-            )}
           </React.Fragment>
         );
       }
@@ -127,7 +135,7 @@ const Stories = () => {
       {projects?.length ? (
         <>
           <S.HeadingWrapper>
-            <S.StoriesHeading>Active project stories:</S.StoriesHeading>
+            <Typography>Active project stories:</Typography>
             <PlusOutlined
               style={{ fontSize: 24, color: 'green' }}
               onClick={() => setIsAddStoryModalOpen(true)}
@@ -135,20 +143,55 @@ const Stories = () => {
           </S.HeadingWrapper>
           {activeProjectStories && (
             <>
-              <S.StoriesWrapper>
-                <S.StatusLabel>To do</S.StatusLabel>
-                <S.Stories>{renderStories('todo')}</S.Stories>
-              </S.StoriesWrapper>
+              <S.KanbanWrapper>
+                <Card title="To do">
+                  <S.StoriesWrapper>
+                    {/* <S.StatusLabel>To do</S.StatusLabel> */}
+                    <S.Stories>{renderStories('todo')}</S.Stories>
+                  </S.StoriesWrapper>
+                </Card>
 
-              <S.StoriesWrapper>
-                <S.StatusLabel>Doing</S.StatusLabel>
-                <S.Stories>{renderStories('doing')}</S.Stories>
-              </S.StoriesWrapper>
+                <Card title="Doing">
+                  <S.StoriesWrapper>
+                    <S.Stories>{renderStories('doing')}</S.Stories>
+                  </S.StoriesWrapper>
+                </Card>
 
-              <S.StoriesWrapper>
-                <S.StatusLabel>Done</S.StatusLabel>
-                <S.Stories>{renderStories('done')}</S.Stories>
-              </S.StoriesWrapper>
+                <Card title="Done">
+                  <S.StoriesWrapper>
+                    <S.Stories>{renderStories('done')}</S.Stories>
+                  </S.StoriesWrapper>
+                </Card>
+              </S.KanbanWrapper>
+
+              <S.HeadingWrapper>
+                <Typography>Active project tasks:</Typography>
+
+                <PlusOutlined
+                  style={{ fontSize: 24, color: 'green' }}
+                  onClick={() => setIsAddTaskModalOpen(true)}
+                />
+              </S.HeadingWrapper>
+
+              <S.KanbanWrapper>
+                <Card title="To do">
+                  <S.StoriesWrapper>
+                    <S.Stories>{renderTasks('todo')}</S.Stories>
+                  </S.StoriesWrapper>
+                </Card>
+
+                <Card title="Doing">
+                  <S.StoriesWrapper>
+                    <S.Stories>{renderTasks('doing')}</S.Stories>
+                  </S.StoriesWrapper>
+                </Card>
+
+                <Card title="Done">
+                  <S.StoriesWrapper>
+                    <S.Stories>{renderTasks('done')}</S.Stories>
+                  </S.StoriesWrapper>
+                </Card>
+              </S.KanbanWrapper>
             </>
           )}
 
@@ -160,13 +203,21 @@ const Stories = () => {
             />
           )}
 
-          {newTaskStoryId && (
-            <TaskForm
-              isModalOpen={isAddTaskModalOpen}
-              storyId={newTaskStoryId}
-              setIsModalOpen={setIsAddTaskModalOpen}
+          {editedTaskId && (
+            <EditTask
+              isModalOpen={isEditTaskModalOpen}
+              setIsModalOpen={setIsEditTaskModalOpen}
+              taskId={editedTaskId}
             />
           )}
+
+          {/* {newTaskStoryId && ( */}
+          <TaskForm
+            isModalOpen={isAddTaskModalOpen}
+            // storyId={newTaskStoryId}
+            setIsModalOpen={setIsAddTaskModalOpen}
+          />
+          {/* )} */}
 
           <StoryForm
             isModalOpen={isAddStoryModalOpen}
