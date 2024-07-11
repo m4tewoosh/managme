@@ -1,14 +1,22 @@
 import { Menu } from 'antd';
 import { LogoutOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
+import Auth from '../../classes/auth';
 
 import * as S from './Header.styled';
 
 type HeaderProps = {
+  isLogged: boolean;
+  setIsLogged: (isLogged: boolean) => void;
   isDarkMode: boolean;
   setIsDarkMode: (value: React.SetStateAction<boolean>) => void;
 };
 
-const Header = ({ isDarkMode, setIsDarkMode }: HeaderProps) => {
+const Header = ({
+  isLogged,
+  setIsLogged,
+  isDarkMode,
+  setIsDarkMode,
+}: HeaderProps) => {
   const handleSetDarkMode = () => {
     setIsDarkMode((prev) => !prev);
 
@@ -24,20 +32,18 @@ const Header = ({ isDarkMode, setIsDarkMode }: HeaderProps) => {
     },
   ];
 
+  const logoutItem = {
+    label: 'Logout',
+    key: 'logout',
+    icon: <LogoutOutlined />,
+    onClick: () => {
+      Auth.logout();
+      setIsLogged(false);
+    },
+  };
+
   const items = [
-    {
-      label: 'Logout',
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      onClick: () => {
-        // Auth.logout();
-        window.location.href = '/register';
-      },
-    },
-    {
-      label: <span>Register</span>,
-      key: 'register',
-    },
+    isLogged ? { ...logoutItem } : null,
     {
       label: <span>Login</span>,
       key: 'login',

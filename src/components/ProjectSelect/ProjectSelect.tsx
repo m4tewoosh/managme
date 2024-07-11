@@ -115,6 +115,7 @@ const ProjectSelect = () => {
           <ProjectForm
             isModalOpen={isProjectModalOpen}
             setIsModalOpen={setIsProjectModalOpen}
+            setSelectedProject={setSelectedProject}
           />
         </Card>
       )}

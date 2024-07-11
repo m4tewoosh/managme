@@ -85,7 +85,7 @@ const EditTask = ({
       newState = 'todo';
     }
 
-    const task = {
+    const task: Task = {
       id: taskId,
       assignedUserId,
       name,
@@ -95,6 +95,7 @@ const EditTask = ({
       state: newState || 'todo',
       storyId,
       startedAt: new Date(Date.now()),
+      finishedAt: newState === 'done' ? new Date(Date.now()) : undefined,
     };
 
     apiBridge.updateTask(task);

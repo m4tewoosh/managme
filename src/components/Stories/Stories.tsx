@@ -36,6 +36,14 @@ const Stories = () => {
     }
 
     const filteredStories = [...stories].filter(({ id }) => id !== storyId);
+
+    const tasks = rxjsStore.getStoreTasks().getValue();
+
+    if (tasks) {
+      const filteredTasks = tasks.filter((task) => task.storyId !== storyId);
+      rxjsStore.setStoreTasks(filteredTasks);
+    }
+
     rxjsStore.setStoreStories(filteredStories);
   };
 

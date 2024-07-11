@@ -1,8 +1,9 @@
 import { Input, Button, Form, Modal } from 'antd';
 import { rxjsStore } from '../../store/rxjsStore';
-import Project from '../../classes/project';
 
 import * as S from './ProjectFormStyled';
+import { Project as ProjectType } from '../../types/project';
+import Project from '../../classes/project';
 
 const { TextArea } = Input;
 
@@ -14,9 +15,14 @@ type FormValues = {
 type ProjectFormProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
+  setSelectedProject: (project: ProjectType) => void;
 };
 
-const ProjectForm = ({ isModalOpen, setIsModalOpen }: ProjectFormProps) => {
+const ProjectForm = ({
+  isModalOpen,
+  setIsModalOpen,
+  setSelectedProject,
+}: ProjectFormProps) => {
   const handleSubmit = ({ name, description }: FormValues) => {
     const existingStoreProjects = rxjsStore.getStoreProjects().getValue();
 
@@ -25,9 +31,13 @@ const ProjectForm = ({ isModalOpen, setIsModalOpen }: ProjectFormProps) => {
 
     const newProjectId = lastProjectId ? lastProjectId + 1 : 1;
 
+    const projectData = { id: newProjectId, name, description };
+
     new Project(newProjectId, name, description);
 
     rxjsStore.setStoreActiveProject(newProjectId);
+
+    setSelectedProject(projectData);
 
     setIsModalOpen(false);
   };

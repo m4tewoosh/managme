@@ -5,6 +5,8 @@ import Stories from './components/Stories/Stories';
 // import StoryForm from './components/StoryForm/StoryForm';
 import { ConfigProvider, Layout } from 'antd';
 import Header from './components/Header/Header';
+import LoginForm from './components/LoginForm/LoginForm';
+import Auth from './classes/auth';
 
 const layoutStyle = {
   padding: 48,
@@ -14,6 +16,7 @@ const layoutStyle = {
 
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isLogged, setIsLogged] = useState(Auth.isLogged());
 
   const lightTheme = {
     token: { colorPrimary: '#51258f', colorBgLayout: '#ced4da' },
@@ -36,16 +39,29 @@ const App = () => {
       setIsDarkMode(JSON.parse(darkMode));
     }
 
+    setIsLogged(Auth.isLogged());
+
     appSetup();
   }, []);
 
   return (
     <ConfigProvider theme={isDarkMode ? darkTheme : lightTheme}>
-      <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      <Header
+        isLogged={isLogged}
+        setIsLogged={setIsLogged}
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
+      />
 
       <Layout style={layoutStyle}>
-        <ProjectSelect />
-        <Stories />
+        {!isLogged ? (
+          <LoginForm onSuccess={() => setIsLogged(true)} />
+        ) : (
+          <>
+            <ProjectSelect />
+            <Stories />
+          </>
+        )}
       </Layout>
       {/* <StoryForm /> */}
     </ConfigProvider>
