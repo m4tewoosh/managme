@@ -42,13 +42,7 @@ const Header = ({
     },
   };
 
-  const items = [
-    isLogged ? { ...logoutItem } : null,
-    {
-      label: <span>Login</span>,
-      key: 'login',
-    },
-  ];
+  const items = [isLogged ? { ...logoutItem } : null];
 
   return (
     <S.Header>

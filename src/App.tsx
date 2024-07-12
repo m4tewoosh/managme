@@ -7,6 +7,7 @@ import { ConfigProvider, Layout } from 'antd';
 import Header from './components/Header/Header';
 import LoginForm from './components/LoginForm/LoginForm';
 import Auth from './classes/auth';
+import { rxjsStore } from './store/rxjsStore';
 
 const layoutStyle = {
   padding: 48,
@@ -17,6 +18,7 @@ const layoutStyle = {
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLogged, setIsLogged] = useState(Auth.isLogged());
+  const [activeProjectId, setActiveProjectId] = useState<number | null>();
 
   const lightTheme = {
     token: { colorPrimary: '#51258f', colorBgLayout: '#ced4da' },
@@ -41,6 +43,10 @@ const App = () => {
 
     setIsLogged(Auth.isLogged());
 
+    rxjsStore.getStoreActiveProject().subscribe((id) => {
+      setActiveProjectId(id);
+    });
+
     appSetup();
   }, []);
 
@@ -58,8 +64,12 @@ const App = () => {
           <LoginForm onSuccess={() => setIsLogged(true)} />
         ) : (
           <>
-            <ProjectSelect />
-            <Stories />
+            {activeProjectId && (
+              <>
+                <ProjectSelect />
+                <Stories />
+              </>
+            )}
           </>
         )}
       </Layout>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Input, Button, Form, Modal } from 'antd';
 import { rxjsStore } from '../../store/rxjsStore';
-import { apiBridge } from '../../appSetup';
 import { Project } from '../../types/project';
+import ApiBridge from '../../classes/apiBridge';
 
 import * as S from './EditProject.styled';
 
@@ -29,7 +29,7 @@ const EditProject = ({
   const handleSubmit = ({ name, description }: FormValues) => {
     const project = { id: projectId, name, description };
 
-    apiBridge.updateProject(project);
+    ApiBridge.updateProject(project);
 
     setIsModalOpen(false);
   };

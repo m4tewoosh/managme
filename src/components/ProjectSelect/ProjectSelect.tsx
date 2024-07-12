@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Card, Select, Typography } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { rxjsStore } from '../../store/rxjsStore';
@@ -13,11 +13,6 @@ const ProjectSelect = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-
-  const projectSelectOptions = projects?.map((project) => ({
-    value: project.id,
-    label: project.name,
-  }));
 
   const handleDeleteActiveProject = () => {
     if (!projects) {
@@ -53,18 +48,31 @@ const ProjectSelect = () => {
       }
 
       setProjects(projects);
-      setSelectedProject(projects[0]);
+
+      if (projects) {
+        const selectedProject = projects!.find(
+          (project) =>
+            project.id === rxjsStore.getStoreActiveProject().getValue()
+        );
+
+        setSelectedProject(selectedProject || projects[0]);
+      }
     });
   }, []);
+
+  const projectSelectOptions = projects?.map((project) => ({
+    value: project.id,
+    label: project.name,
+  }));
 
   return (
     <S.Wrapper>
       {projects && (
         <Card title="Active project">
-          {/* <S.ProjectLabel>Active project:</S.ProjectLabel> */}
           <S.SelectWrapper>
             {projectSelectOptions && (
               <Select
+                defaultValue={projects[0].id}
                 value={selectedProject?.id}
                 onSelect={(value): void => {
                   rxjsStore.setStoreActiveProject(Number(value));

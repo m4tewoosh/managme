@@ -3,10 +3,10 @@ import { Input, Button, Form, Modal, Select } from 'antd';
 import { rxjsStore } from '../../store/rxjsStore';
 
 import * as S from './EditTask.styled';
-import { apiBridge } from '../../appSetup';
 import { Priority, State, Story } from '../../types/story';
 import { User } from '../../types/user';
 import { Task } from '../../types/task';
+import ApiBridge from '../../classes/apiBridge';
 
 const { TextArea } = Input;
 
@@ -98,7 +98,7 @@ const EditTask = ({
       finishedAt: newState === 'done' ? new Date(Date.now()) : undefined,
     };
 
-    apiBridge.updateTask(task);
+    ApiBridge.updateTask(task);
 
     setIsModalOpen(false);
   };

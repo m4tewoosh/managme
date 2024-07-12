@@ -1,4 +1,4 @@
-import { apiBridge } from '../appSetup';
+import ApiBridge from './apiBridge';
 import { Priority, State } from '../types/story';
 
 class Story {
@@ -12,7 +12,7 @@ class Story {
     projectId: number,
     state: State
   ) {
-    apiBridge.saveStory({
+    ApiBridge.saveStory({
       id,
       createdAt,
       description,

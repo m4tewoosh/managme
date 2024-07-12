@@ -142,7 +142,7 @@ const StoryForm = ({ isModalOpen, setIsModalOpen }: StoryFormProps) => {
             <Form.Item
               label="Owner:"
               name="ownerId"
-              initialValue={ownerSelectOptions[0].value}
+              initialValue={ownerSelectOptions[0]?.value}
               rules={[
                 {
                   required: true,

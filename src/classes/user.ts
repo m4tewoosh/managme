@@ -1,4 +1,4 @@
-import { apiBridge } from '../appSetup';
+import ApiBridge from './apiBridge';
 import { UserRole } from '../types/user';
 
 class User {
@@ -8,7 +8,7 @@ class User {
     surname: string,
     role: UserRole
   ) {
-    apiBridge.saveUser({ id, name, surname, role });
+    ApiBridge.saveUser({ id, name, surname, role });
   }
 }
 

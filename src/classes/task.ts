@@ -1,4 +1,4 @@
-import { apiBridge } from '../appSetup';
+import ApiBridge from './apiBridge';
 import { Priority, State } from '../types/story';
 
 class Task {
@@ -15,7 +15,7 @@ class Task {
     finishedAt?: Date,
     assignedUserId?: number
   ) {
-    apiBridge.saveTask({
+    ApiBridge.saveTask({
       id,
       name,
       description,

@@ -3,9 +3,9 @@ import { Input, Button, Form, Modal, Select } from 'antd';
 import { rxjsStore } from '../../store/rxjsStore';
 
 import * as S from './EditStory.styled';
-import { apiBridge } from '../../appSetup';
 import { Priority, State, Story } from '../../types/story';
 import { User } from '../../types/user';
+import ApiBridge from '../../classes/apiBridge';
 
 const { TextArea } = Input;
 
@@ -57,7 +57,7 @@ const EditStory = ({
   }: FormValues) => {
     const story = { id: storyId, name, description, priority, ownerId, state };
 
-    apiBridge.updateStory(story);
+    ApiBridge.updateStory(story);
 
     setIsModalOpen(false);
   };

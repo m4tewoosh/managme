@@ -1,8 +1,8 @@
-import { apiBridge } from '../appSetup';
+import ApiBridge from './apiBridge';
 
 class Project {
   public constructor(id: number, name: string, description: string) {
-    apiBridge.saveProject({ id, name, description });
+    ApiBridge.saveProject({ id, name, description });
   }
 }
 
