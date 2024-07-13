@@ -19,7 +19,7 @@ const firebaseConfig = {
   projectId: 'managme-23c99',
   storageBucket: 'managme-23c99.appspot.com',
   messagingSenderId: '979372707728',
-  appId: '1:979372707728:web:e6201243f17077a66c6d15',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 class ApiBridge {
