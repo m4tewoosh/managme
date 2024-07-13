@@ -14,7 +14,7 @@ import { Task } from '../types/task';
 import { User } from '../types/user';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyC5wrIz_wjc0-1Jd1JzcnP3V-gfvg8fUOg',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: 'managme-23c99.firebaseapp.com',
   projectId: 'managme-23c99',
   storageBucket: 'managme-23c99.appspot.com',
