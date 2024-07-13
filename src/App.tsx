@@ -64,12 +64,12 @@ const App = () => {
           <LoginForm onSuccess={() => setIsLogged(true)} />
         ) : (
           <>
-            {activeProjectId && (
+            {activeProjectId ? (
               <>
                 <ProjectSelect />
                 <Stories />
               </>
-            )}
+            ) : null}
           </>
         )}
       </Layout>

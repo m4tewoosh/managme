@@ -11,6 +11,7 @@ import { Project } from '../../types/project';
 import * as S from './Stories.styled';
 import TaskForm from '../TaskForm/TaskForm';
 import EditTask from '../EditTask/EditTask';
+import ApiBridge from '../../classes/apiBridge';
 
 const Stories = () => {
   const [activeProjectId, setActiveProjectId] = useState<number>();
@@ -44,6 +45,9 @@ const Stories = () => {
       rxjsStore.setStoreTasks(filteredTasks);
     }
 
+    const tasksToDelete = tasks.filter((task) => task.storyId === storyId);
+    ApiBridge.deleteStory(storyId);
+    ApiBridge.deleteStoryTasks(tasksToDelete);
     rxjsStore.setStoreStories(filteredStories);
   };
 
@@ -53,6 +57,8 @@ const Stories = () => {
     }
 
     const filteredTasks = [...tasks].filter(({ id }) => id !== taskId);
+
+    ApiBridge.deleteTask(taskId);
     rxjsStore.setStoreTasks(filteredTasks);
   };
 
@@ -75,11 +81,11 @@ const Stories = () => {
           <S.TaskWrapper key={task.id}>
             <S.TaskLabel>{task.name}</S.TaskLabel>
             <DeleteOutlined
-              style={{ fontSize: 24, color: 'red' }}
+              style={{ fontSize: 24, color: '#ff4d4f' }}
               onClick={() => handleDeleteTask(task.id)}
             />
             <EditOutlined
-              style={{ fontSize: 24, color: 'blue' }}
+              style={{ fontSize: 24, color: '#69b1ff' }}
               onClick={() => {
                 setEditedTaskId(task.id);
                 setIsEditTaskModalOpen(true);
@@ -103,11 +109,11 @@ const Stories = () => {
             <S.StoryWrapper key={story.id}>
               <p>{story.name}</p>
               <DeleteOutlined
-                style={{ fontSize: 24, color: 'red' }}
+                style={{ fontSize: 24, color: '#ff4d4f' }}
                 onClick={() => handleDeleteStory(story.id)}
               />
               <EditOutlined
-                style={{ fontSize: 24, color: 'blue' }}
+                style={{ fontSize: 24, color: '#69b1ff' }}
                 onClick={() => {
                   setEditedStoryId(story.id);
                   setIsEditStoryModalOpen(true);
@@ -145,7 +151,7 @@ const Stories = () => {
           <S.HeadingWrapper>
             <Typography>Active project stories:</Typography>
             <PlusOutlined
-              style={{ fontSize: 24, color: 'green' }}
+              style={{ fontSize: 24, color: '#73d13d' }}
               onClick={() => setIsAddStoryModalOpen(true)}
             />
           </S.HeadingWrapper>
@@ -176,7 +182,7 @@ const Stories = () => {
                 <Typography>Active project tasks:</Typography>
 
                 <PlusOutlined
-                  style={{ fontSize: 24, color: 'green' }}
+                  style={{ fontSize: 24, color: '#73d13d' }}
                   onClick={() => setIsAddTaskModalOpen(true)}
                 />
               </S.HeadingWrapper>

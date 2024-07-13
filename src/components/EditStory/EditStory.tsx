@@ -63,14 +63,15 @@ const EditStory = ({
   };
 
   useEffect(() => {
-    const existingStoreStories = rxjsStore.getStoreStories().getValue();
-    const editedStory = existingStoreStories.find(({ id }) => id === storyId);
+    rxjsStore.getStoreStories().subscribe((stories) => {
+      const editedStory = stories.find(({ id }) => id === storyId);
 
-    if (!editedStory) {
-      return;
-    }
+      if (!editedStory) {
+        return;
+      }
 
-    setStory(editedStory);
+      setStory(editedStory);
+    });
 
     rxjsStore.getStoreUsers().subscribe((users) => {
       setUsers(users);

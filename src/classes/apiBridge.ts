@@ -5,6 +5,7 @@ import {
   getDocs,
   setDoc,
   doc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { rxjsStore } from '../store/rxjsStore';
 import { Project } from '../types/project';
@@ -32,7 +33,6 @@ class ApiBridge {
 
   public async saveProject(project: Project) {
     const projectsRef = collection(this.db, 'projects');
-
     await setDoc(doc(projectsRef, String(project.id)), project);
 
     const existingStoreProjects = rxjsStore.getStoreProjects().getValue();
@@ -51,14 +51,6 @@ class ApiBridge {
 
     const existingStoreProjects = rxjsStore.getStoreProjects().getValue();
 
-    const updatedProject = existingStoreProjects.find(
-      ({ id }) => id === project.id
-    );
-
-    if (!updatedProject) {
-      return;
-    }
-
     const filteredProjects = existingStoreProjects.filter(
       ({ id }) => id !== project.id
     );
@@ -67,41 +59,69 @@ class ApiBridge {
       (a, b) => a.id - b.id
     );
 
-    console.log(newProjects);
-
     rxjsStore.setStoreProjects(newProjects);
-
-    // updatedProject.name = project.name;
-    // updatedProject.description = project.description;
   }
 
-  public saveStory(story: Story) {
+  public async deleteProject(projectId: number) {
+    const projectsRef = collection(this.db, 'projects');
+    const storiesRef = collection(this.db, 'stories');
+
+    const existingStoreStories = rxjsStore.getStoreStories().getValue();
+    const existingStoreTasks = rxjsStore.getStoreTasks().getValue();
+
+    console.log(projectId);
+
+    console.log(existingStoreStories);
+    const projectRelatedStories = existingStoreStories.filter(
+      (story) => story.projectId === projectId
+    );
+
+    await deleteDoc(doc(projectsRef, String(projectId)));
+
+    console.log(projectRelatedStories);
+
+    projectRelatedStories.forEach(async (story) => {
+      await deleteDoc(doc(storiesRef, String(story.id)));
+
+      const tasksToDelete = existingStoreTasks.filter(
+        (task) => task.storyId === story.id
+      );
+      await this.deleteStoryTasks(tasksToDelete);
+    });
+  }
+
+  public async saveStory(story: Story) {
+    const storiesRef = collection(this.db, 'stories');
+    await setDoc(doc(storiesRef, String(story.id)), story);
+
     const existingStoreStories = rxjsStore.getStoreStories().getValue();
     rxjsStore.setStoreStories([...existingStoreStories, story]);
   }
 
-  public updateStory(story: Story) {
+  public async updateStory(story: Story) {
     const existingStoreStories = rxjsStore.getStoreStories().getValue();
+    const updatedStory = existingStoreStories.find(({ id }) => id === story.id);
 
-    // const updatedStory = existingStoreStories.find(({ id }) => id === story.id);
+    const newStory = {
+      ...story,
+      createdAt: updatedStory?.createdAt,
+      projectId: updatedStory?.projectId,
+    };
+
+    const storiesRef = collection(this.db, 'stories');
+    await setDoc(doc(storiesRef, String(newStory.id)), newStory);
 
     const filteredStories = existingStoreStories.filter(
       ({ id }) => id !== story.id
     );
-
-    const newStories = [...filteredStories, story];
+    const newStories = [...filteredStories, newStory];
 
     rxjsStore.setStoreStories(newStories);
+  }
 
-    // if (!updatedStory) {
-    //   return;
-    // }
-
-    // updatedStory.name = story.name;
-    // updatedStory.description = story.description;
-    // updatedStory.priority = story.priority;
-    // updatedStory.state = story.state;
-    // updatedStory.ownerId = story.ownerId;
+  public async deleteStory(storyId: number) {
+    const storiesRef = collection(this.db, 'stories');
+    await deleteDoc(doc(storiesRef, String(storyId)));
   }
 
   public selectActiveProject(projectId: number) {
@@ -113,27 +133,47 @@ class ApiBridge {
     rxjsStore.setStoreUsers([...existingStoreUsers, user]);
   }
 
-  public saveTask(task: Task) {
+  public async saveTask(task: Task) {
+    const tasksRef = collection(this.db, 'tasks');
+    await setDoc(doc(tasksRef, String(task.id)), task);
+
     const existingStoreTasks = rxjsStore.getStoreTasks().getValue();
     rxjsStore.setStoreTasks([...existingStoreTasks, task]);
   }
 
-  public updateTask(task: Task) {
+  public async updateTask(task: Task) {
     const existingStoreTasks = rxjsStore.getStoreTasks().getValue();
-
     const updatedTask = existingStoreTasks.find(({ id }) => id === task.id);
 
-    if (!updatedTask) {
-      return;
-    }
+    console.log(updatedTask);
 
-    updatedTask.name = task.name;
-    updatedTask.description = task.description;
-    updatedTask.priority = task.priority;
-    updatedTask.state = task.state;
-    updatedTask.assignedUserId = task.assignedUserId;
-    updatedTask.estimatedTime = task.estimatedTime;
-    updatedTask.storyId = task.storyId;
+    const newTask = {
+      ...task,
+      createdAt: updatedTask?.createdAt,
+      startedAt: task.startedAt || updatedTask?.startedAt,
+      finishedAt: task.finishedAt || updatedTask?.finishedAt || null,
+    };
+
+    const tasksRef = collection(this.db, 'tasks');
+    await setDoc(doc(tasksRef, String(newTask.id)), newTask);
+
+    const filteredTasks = existingStoreTasks.filter(({ id }) => id !== task.id);
+    const newTasks = [...filteredTasks, newTask];
+
+    rxjsStore.setStoreTasks(newTasks);
+  }
+
+  public async deleteTask(taskId: number) {
+    const tasksRef = collection(this.db, 'tasks');
+    await deleteDoc(doc(tasksRef, String(taskId)));
+  }
+
+  public deleteStoryTasks(tasksToDelete: Task[]) {
+    const tasksRef = collection(this.db, 'tasks');
+
+    tasksToDelete.forEach(async (task) => {
+      await deleteDoc(doc(tasksRef, String(task.id)));
+    });
   }
 
   public async getDBUsers() {

@@ -94,7 +94,7 @@ const EditTask = ({
       priority,
       state: newState || 'todo',
       storyId,
-      startedAt: new Date(Date.now()),
+      startedAt: newState === 'doing' ? new Date(Date.now()) : null,
       finishedAt: newState === 'done' ? new Date(Date.now()) : undefined,
     };
 
@@ -104,14 +104,15 @@ const EditTask = ({
   };
 
   useEffect(() => {
-    const existingStoreTasks = rxjsStore.getStoreTasks().getValue();
-    const editedTask = existingStoreTasks.find(({ id }) => id === taskId);
+    rxjsStore.getStoreTasks().subscribe((tasks) => {
+      const editedTask = tasks.find(({ id }) => id === taskId);
 
-    if (!editedTask) {
-      return;
-    }
+      if (!editedTask) {
+        return;
+      }
 
-    setTask(editedTask);
+      setTask(editedTask);
+    });
 
     rxjsStore.getStoreActiveProject().subscribe((id) => {
       setActiveProjectId(id);
@@ -126,6 +127,33 @@ const EditTask = ({
     });
   }, [taskId]);
 
+  let createdAtDate, startedAtDate, finishedAtDate;
+
+  if (task?.createdAt instanceof Date) {
+    createdAtDate = null;
+  } else {
+    if (task?.createdAt) {
+      createdAtDate = new Date(task.createdAt.seconds * 1000).toLocaleString();
+    }
+  }
+
+  if (task?.startedAt instanceof Date) {
+    startedAtDate = null;
+  } else {
+    if (task?.startedAt) {
+      startedAtDate = new Date(task.startedAt.seconds * 1000).toLocaleString();
+    }
+  }
+
+  if (task?.finishedAt instanceof Date) {
+    finishedAtDate = null;
+  } else {
+    if (task?.finishedAt) {
+      finishedAtDate = new Date(
+        task.finishedAt.seconds * 1000
+      ).toLocaleString();
+    }
+  }
   return (
     <Modal
       title="Edit Task"
@@ -214,14 +242,56 @@ const EditTask = ({
                 label="Estimated time in days:"
                 name="estimatedTime"
                 initialValue={task.estimatedTime}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select estimated time!',
+                  },
+                ]}
               >
                 <Input type="number" />
               </Form.Item>
+
+              {createdAtDate && (
+                <Form.Item
+                  label="Created at:"
+                  name="createdAt"
+                  initialValue={createdAtDate}
+                >
+                  <Input type="text" disabled />
+                </Form.Item>
+              )}
+
+              {task.state !== 'todo' && startedAtDate ? (
+                <Form.Item
+                  label="Started at:"
+                  name="startedAt"
+                  initialValue={startedAtDate}
+                >
+                  <Input type="text" disabled />
+                </Form.Item>
+              ) : null}
+
+              {finishedAtDate && (
+                <Form.Item
+                  label="Finished at:"
+                  name="finishedAt"
+                  initialValue={finishedAtDate}
+                >
+                  <Input type="text" disabled />
+                </Form.Item>
+              )}
               {ownerSelectOptions && (
                 <Form.Item
                   label="Assigned user:"
                   name="assignedUserId"
                   initialValue={task.assignedUserId}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select assigned user!',
+                    },
+                  ]}
                 >
                   <Select options={ownerSelectOptions} />
                 </Form.Item>

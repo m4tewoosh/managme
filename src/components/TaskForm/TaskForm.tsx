@@ -116,7 +116,7 @@ const TaskForm = ({ isModalOpen, setIsModalOpen }: TaskFormProps) => {
           {storySelectOptions && (
             <Form.Item
               label="Story:"
-              name="story"
+              name="storyId"
               initialValue={storySelectOptions[0]?.value}
               rules={[
                 {

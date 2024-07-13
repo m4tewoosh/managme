@@ -10,10 +10,7 @@ class Task {
     storyId: number,
     estimatedTime: number, //in days
     state: State,
-    createdAt: Date,
-    startedAt?: Date,
-    finishedAt?: Date,
-    assignedUserId?: number
+    createdAt: Date
   ) {
     ApiBridge.saveTask({
       id,
@@ -24,9 +21,6 @@ class Task {
       estimatedTime,
       state,
       createdAt,
-      startedAt,
-      finishedAt,
-      assignedUserId,
     });
   }
 }

@@ -10,14 +10,16 @@ const appSetup = async () => {
   rxjsStore.setStoreUsers(dbUsers);
 
   const dbProjects = await ApiBridge.getDBProjects();
+  console.log('projects', dbProjects);
   rxjsStore.setStoreProjects(dbProjects);
   rxjsStore.setStoreActiveProject(dbProjects[0].id);
 
   const dbStories = await ApiBridge.getDBStories();
+  console.log('stories', dbStories);
   rxjsStore.setStoreStories(dbStories);
 
   const dbTasks = await ApiBridge.getDBTasks();
-
+  console.log('tasks', dbTasks);
   rxjsStore.setStoreTasks(dbTasks);
 
   // new User(1, 'Mateusz', 'Nowak', 'admin');

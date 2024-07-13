@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Select, Typography } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { rxjsStore } from '../../store/rxjsStore';
@@ -7,6 +7,7 @@ import { Project } from '../../types/project';
 import * as S from './ProjectSelect.styled';
 import EditProject from '../EditProject/EditProject';
 import ProjectForm from '../ProjectForm/ProjectForm';
+import ApiBridge from '../../classes/apiBridge';
 
 const ProjectSelect = () => {
   const [projects, setProjects] = useState<Project[] | null>(null);
@@ -21,15 +22,6 @@ const ProjectSelect = () => {
 
     const activeProjectId = rxjsStore.getStoreActiveProject().getValue();
 
-    const activeProjectStories = rxjsStore.getStoreStories().getValue();
-
-    if (activeProjectStories) {
-      const filteredStories = [...activeProjectStories].filter(
-        (story) => story.projectId !== activeProjectId
-      );
-      rxjsStore.setStoreStories(filteredStories);
-    }
-
     const filteredProjects = [...projects].filter(
       ({ id }) => id !== activeProjectId
     );
@@ -38,7 +30,17 @@ const ProjectSelect = () => {
       rxjsStore.setStoreActiveProject(filteredProjects[0].id);
     }
 
+    ApiBridge.deleteProject(activeProjectId);
     rxjsStore.setStoreProjects(filteredProjects);
+
+    const activeProjectStories = rxjsStore.getStoreStories().getValue();
+
+    if (activeProjectStories) {
+      const filteredStories = [...activeProjectStories].filter(
+        (story) => story.projectId !== activeProjectId
+      );
+      rxjsStore.setStoreStories(filteredStories);
+    }
   };
 
   useEffect(() => {
@@ -93,17 +95,17 @@ const ProjectSelect = () => {
             {projects.length > 0 && (
               <>
                 <DeleteOutlined
-                  style={{ fontSize: 24, color: 'red' }}
+                  style={{ fontSize: 24, color: '#ff4d4f' }}
                   onClick={handleDeleteActiveProject}
                 />
                 <EditOutlined
-                  style={{ fontSize: 24, color: 'blue' }}
+                  style={{ fontSize: 24, color: '#69b1ff' }}
                   onClick={() => setIsEditModalOpen(true)}
                 />
               </>
             )}
             <PlusOutlined
-              style={{ fontSize: 24, color: 'green' }}
+              style={{ fontSize: 24, color: '#73d13d' }}
               onClick={() => setIsProjectModalOpen(true)}
             />
           </S.SelectWrapper>

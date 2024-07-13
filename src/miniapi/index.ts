@@ -28,7 +28,7 @@ app.post('/login', function (req, res) {
   const password = req.body.password;
 
   if (login === 'admin' && password === 'admin') {
-    const token = generateToken(600);
+    const token = generateToken(6000);
 
     res.status(200).send({ token, refreshToken });
 
